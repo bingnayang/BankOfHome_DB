@@ -1,8 +1,17 @@
 package com.company;
 
+import com.company.model.Datasource;
+
 public class Main {
 
     public static void main(String[] args) {
-	// write your code here
+        Datasource datasource = new Datasource();
+        if(!datasource.open()){
+            System.out.println("Could not open datasource");
+            return;
+        }
+
+        // Close connection
+        datasource.close();
     }
 }
