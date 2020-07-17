@@ -82,6 +82,27 @@ public class Datasource {
     /**
      * DB Query
      */
+    private static final String QUERY_TRANSACTION_TYPE_ID =
+        "SELECT "+TABLE_TRANSACTION_TYPE+"."+COLUMN_TRANS_TYPE_ID+
+            " FROM "+TABLE_TRANSACTION_TYPE+
+            " WHERE "+TABLE_TRANSACTION_TYPE+"."+COLUMN_TRANS_TYPE_NAME+"=?";
+
+    private static final String QUERY_ACCOUNT_ID =
+        "SELECT "+TABLE_ACCOUNT+"."+COLUMN_ACCOUNT_ID+
+            " FROM "+TABLE_ACCOUNT+
+            " WHERE "+TABLE_ACCOUNT+"."+COLUMN_ACCOUNT_NUMBER+"=?";
+
+    private static final String QUERY_BRANCH_ID =
+        "SELECT "+TABLE_BRANCH+"."+COLUMN_BRANCH_ID+
+            " FROM "+TABLE_BRANCH+
+            " WHERE "+TABLE_BRANCH+"."+COLUMN_BRANCH_NAME+"=?";
+
+    private static final String QUERY_EMPLOYEE_ID =
+        "SELECT "+TABLE_EMPLOYEE+"."+COLUMN_EMPLOYEE_ID+
+            " FROM "+TABLE_EMPLOYEE+
+            " WHERE "+TABLE_EMPLOYEE+"."+COLUMN_EMPLOYEE_LAST_NAME+"=?";
+
+
 //    SELECT account.account_Number
 //    FROM account
 //    INNER JOIN customer
@@ -89,16 +110,18 @@ public class Datasource {
 //    AND customer.customer_ID = account.customer_ID
     private static final String QUERY_ACCOUNT_NUMBER_BY_NAME =
         "SELECT "+TABLE_ACCOUNT+"."+COLUMN_ACCOUNT_NUMBER+
-        " FROM "+TABLE_ACCOUNT+
-        " INNER JOIN "+TABLE_CUSTOMER+
-        " WHERE "+TABLE_CUSTOMER+"."+COLUMN_CUSTOMER_FIRST_NAME+"=?"+
-        " AND "+TABLE_CUSTOMER+"."+COLUMN_CUSTOMER_LAST_NAME+"=?"+
-        " AND "+TABLE_CUSTOMER+"."+COLUMN_CUSTOMER_ID+" = "+TABLE_ACCOUNT+"."+COLUMN_ACCOUNT_CUSTOMER_ID;
-
-
-
+            " FROM "+TABLE_ACCOUNT+
+            " INNER JOIN "+TABLE_CUSTOMER+
+            " WHERE "+TABLE_CUSTOMER+"."+COLUMN_CUSTOMER_FIRST_NAME+"=?"+
+            " AND "+TABLE_CUSTOMER+"."+COLUMN_CUSTOMER_LAST_NAME+"=?"+
+            " AND "+TABLE_CUSTOMER+"."+COLUMN_CUSTOMER_ID+" = "+TABLE_ACCOUNT+"."+COLUMN_ACCOUNT_CUSTOMER_ID;
 
     private Connection connection;
+
+    private PreparedStatement queryTransactionTypeID;
+    private PreparedStatement queryAccountID;
+    private PreparedStatement queryBranchID;
+    private PreparedStatement queryEmployeeID;
 
     private PreparedStatement queryAccountNumberByName;
 
@@ -106,6 +129,11 @@ public class Datasource {
     public boolean open(){
         try{
             connection = DriverManager.getConnection(CONNECTION_STRING);
+
+            queryTransactionTypeID = connection.prepareStatement(QUERY_TRANSACTION_TYPE_ID);
+            queryAccountID = connection.prepareStatement(QUERY_ACCOUNT_ID);
+            queryBranchID = connection.prepareStatement(QUERY_BRANCH_ID);
+            queryEmployeeID = connection.prepareStatement(QUERY_EMPLOYEE_ID);
 
             queryAccountNumberByName = connection.prepareStatement(QUERY_ACCOUNT_NUMBER_BY_NAME);
 
@@ -120,6 +148,19 @@ public class Datasource {
     // Close Connection
     public void close(){
         try{
+            if(queryTransactionTypeID != null){
+                queryTransactionTypeID.close();
+            }
+            if(queryAccountID != null){
+                queryAccountID.close();
+            }
+            if(queryBranchID != null){
+                queryBranchID.close();
+            }
+            if(queryEmployeeID != null){
+                queryEmployeeID.close();
+            }
+
             if(queryAccountNumberByName != null){
                 queryAccountNumberByName.close();
             }
@@ -132,8 +173,59 @@ public class Datasource {
             System.out.println("Couldn't close connection: " + e.getMessage());
         }
     }
+    public int queryTransactionTypeID(String type){
+        try{
+            queryTransactionTypeID.setString(1,type);
+            ResultSet resultSet = queryTransactionTypeID.executeQuery();
 
-    public int setQueryAccountNumberByName(String firstName, String lastName){
+            int typeID = resultSet.getInt(1);
+            return typeID;
+        }catch (SQLException e){
+            System.out.println("Query failed: " + e.getMessage());
+            return -1;
+        }
+    }
+    public int queryAccountID(int accountNumber){
+        try{
+            queryAccountID.setInt(1,accountNumber);
+            ResultSet resultSet = queryAccountID.executeQuery();
+
+            int accountID = resultSet.getInt(1);
+            return accountID;
+        }catch (SQLException e){
+            System.out.println("Query failed: " + e.getMessage());
+            return -1;
+        }
+    }
+    public int queryBranchID(String branchName){
+        try{
+            queryBranchID.setString(1,branchName);
+            ResultSet resultSet = queryBranchID.executeQuery();
+
+            int brnachID = resultSet.getInt(1);
+            return brnachID;
+        }catch (SQLException e){
+            System.out.println("Query failed: " + e.getMessage());
+            return -1;
+        }
+    }
+    public int queryEmployeeID(String lastName){
+        try{
+            queryEmployeeID.setString(1,lastName);
+            ResultSet resultSet = queryEmployeeID.executeQuery();
+
+            int employeeID = resultSet.getInt(1);
+            return employeeID;
+        }catch (SQLException e){
+            System.out.println("Query failed: " + e.getMessage());
+            return -1;
+        }
+    }
+
+
+
+
+    public int queryAccountNumberByName(String firstName, String lastName){
         try{
             queryAccountNumberByName.setString(1,firstName);
             queryAccountNumberByName.setString(2,lastName);
@@ -141,7 +233,6 @@ public class Datasource {
 
             int accountNumber = resultSet.getInt(1);
             return accountNumber;
-
         }catch (SQLException e){
             System.out.println("Query failed: " + e.getMessage());
             return -1;
