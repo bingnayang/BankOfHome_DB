@@ -242,13 +242,13 @@ public class Datasource {
         try {
             int accountId = queryAccountID(accountNumber);
             int branchId = queryBranchID(branchName);
-            int transtypeId = queryTransactionTypeID(transactionType);
+            int transTypeId = queryTransactionTypeID(transactionType);
             int employeeId = queryEmployeeID(employeeLastName);
 
             connection.setAutoCommit(false);
             insertTransaction.setInt(1, accountId);
             insertTransaction.setInt(2, branchId);
-            insertTransaction.setInt(3, transtypeId);
+            insertTransaction.setInt(3, transTypeId);
             insertTransaction.setString(4, transDate);
             insertTransaction.setString(5, transTime);
             insertTransaction.setInt(6, employeeId);
