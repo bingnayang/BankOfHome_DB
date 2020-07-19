@@ -12,7 +12,7 @@ public class Main {
         }
 
 //        queryAccountNumber(datasource);
-datasource.insertNewTransaction();
+        insertTransaction(datasource);
 
         // Close connection
         datasource.close();
@@ -34,6 +34,15 @@ datasource.insertNewTransaction();
             System.out.println("Name: "+firstName+" "+lastName);
             System.out.println("Account Number:"+temp);
         }
-
+    }
+    public static void insertTransaction(Datasource datasource){
+        int accountNumber = 12300001;
+        String branchName = "Home Branch";
+        String transactionType = "deposit";
+        String transDate = "2020/07/12";
+        String transTime = "03:10 PM";
+        String employeeLastName = "Adam";
+        double transAmount = 350.00;
+        datasource.insertNewTransaction(accountNumber,branchName,transactionType,transDate,transTime,employeeLastName,transAmount);
     }
 }

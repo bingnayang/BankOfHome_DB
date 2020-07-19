@@ -83,42 +83,42 @@ public class Datasource {
      * DB Query
      */
     private static final String QUERY_TRANSACTION_TYPE_ID =
-        "SELECT "+TABLE_TRANSACTION_TYPE+"."+COLUMN_TRANS_TYPE_ID+
-            " FROM "+TABLE_TRANSACTION_TYPE+
-            " WHERE "+TABLE_TRANSACTION_TYPE+"."+COLUMN_TRANS_TYPE_NAME+"=?";
+            "SELECT " + TABLE_TRANSACTION_TYPE + "." + COLUMN_TRANS_TYPE_ID +
+                    " FROM " + TABLE_TRANSACTION_TYPE +
+                    " WHERE " + TABLE_TRANSACTION_TYPE + "." + COLUMN_TRANS_TYPE_NAME + "=?";
 
     private static final String QUERY_ACCOUNT_ID =
-        "SELECT "+TABLE_ACCOUNT+"."+COLUMN_ACCOUNT_ID+
-            " FROM "+TABLE_ACCOUNT+
-            " WHERE "+TABLE_ACCOUNT+"."+COLUMN_ACCOUNT_NUMBER+"=?";
+            "SELECT " + TABLE_ACCOUNT + "." + COLUMN_ACCOUNT_ID +
+                    " FROM " + TABLE_ACCOUNT +
+                    " WHERE " + TABLE_ACCOUNT + "." + COLUMN_ACCOUNT_NUMBER + "=?";
 
     private static final String QUERY_BRANCH_ID =
-        "SELECT "+TABLE_BRANCH+"."+COLUMN_BRANCH_ID+
-            " FROM "+TABLE_BRANCH+
-            " WHERE "+TABLE_BRANCH+"."+COLUMN_BRANCH_NAME+"=?";
+            "SELECT " + TABLE_BRANCH + "." + COLUMN_BRANCH_ID +
+                    " FROM " + TABLE_BRANCH +
+                    " WHERE " + TABLE_BRANCH + "." + COLUMN_BRANCH_NAME + "=?";
 
     private static final String QUERY_EMPLOYEE_ID =
-        "SELECT "+TABLE_EMPLOYEE+"."+COLUMN_EMPLOYEE_ID+
-            " FROM "+TABLE_EMPLOYEE+
-            " WHERE "+TABLE_EMPLOYEE+"."+COLUMN_EMPLOYEE_LAST_NAME+"=?";
+            "SELECT " + TABLE_EMPLOYEE + "." + COLUMN_EMPLOYEE_ID +
+                    " FROM " + TABLE_EMPLOYEE +
+                    " WHERE " + TABLE_EMPLOYEE + "." + COLUMN_EMPLOYEE_LAST_NAME + "=?";
     //
     private static final String QUERY_ACCOUNT_NUMBER_BY_NAME =
-        "SELECT "+TABLE_ACCOUNT+"."+COLUMN_ACCOUNT_NUMBER+
-            " FROM "+TABLE_ACCOUNT+
-            " INNER JOIN "+TABLE_CUSTOMER+
-            " WHERE "+TABLE_CUSTOMER+"."+COLUMN_CUSTOMER_FIRST_NAME+"=?"+
-            " AND "+TABLE_CUSTOMER+"."+COLUMN_CUSTOMER_LAST_NAME+"=?"+
-            " AND "+TABLE_CUSTOMER+"."+COLUMN_CUSTOMER_ID+" = "+TABLE_ACCOUNT+"."+COLUMN_ACCOUNT_CUSTOMER_ID;
+            "SELECT " + TABLE_ACCOUNT + "." + COLUMN_ACCOUNT_NUMBER +
+                    " FROM " + TABLE_ACCOUNT +
+                    " INNER JOIN " + TABLE_CUSTOMER +
+                    " WHERE " + TABLE_CUSTOMER + "." + COLUMN_CUSTOMER_FIRST_NAME + "=?" +
+                    " AND " + TABLE_CUSTOMER + "." + COLUMN_CUSTOMER_LAST_NAME + "=?" +
+                    " AND " + TABLE_CUSTOMER + "." + COLUMN_CUSTOMER_ID + " = " + TABLE_ACCOUNT + "." + COLUMN_ACCOUNT_CUSTOMER_ID;
     //
     private static final String INSERT_NEW_TRANSACTION =
-            "INSERT INTO "+TABLE_TRANSACTION+" ("+
-                    COLUMN_TRANSACTION_ACCOUNT_ID+","+
-                    COLUMN_TRANSACTION_BRANCH_ID+","+
-                    COLUMN_TRANSACTION_TYPE_ID+","+
-                    COLUMN_TRANSACTION_DATE+","+
-                    COLUMN_TRANSACTION_TIME+","+
-                    COLUMN_TRANSACTION_EMPLOYEE_ID+","+
-                    COLUMN_TRANSACTION_AMOUNT+
+            "INSERT INTO " + TABLE_TRANSACTION + " (" +
+                    COLUMN_TRANSACTION_ACCOUNT_ID + "," +
+                    COLUMN_TRANSACTION_BRANCH_ID + "," +
+                    COLUMN_TRANSACTION_TYPE_ID + "," +
+                    COLUMN_TRANSACTION_DATE + "," +
+                    COLUMN_TRANSACTION_TIME + "," +
+                    COLUMN_TRANSACTION_EMPLOYEE_ID + "," +
+                    COLUMN_TRANSACTION_AMOUNT +
                     ") VALUES(?,?,?,?,?,?,?)";
 
 
@@ -133,8 +133,8 @@ public class Datasource {
     private PreparedStatement insertTransaction;
 
     // Open Connection
-    public boolean open(){
-        try{
+    public boolean open() {
+        try {
             connection = DriverManager.getConnection(CONNECTION_STRING);
 
             queryTransactionTypeID = connection.prepareStatement(QUERY_TRANSACTION_TYPE_ID);
@@ -143,10 +143,10 @@ public class Datasource {
             queryEmployeeID = connection.prepareStatement(QUERY_EMPLOYEE_ID);
 
             queryAccountNumberByName = connection.prepareStatement(QUERY_ACCOUNT_NUMBER_BY_NAME);
-            insertTransaction = connection.prepareStatement(INSERT_NEW_TRANSACTION,Statement.RETURN_GENERATED_KEYS);
+            insertTransaction = connection.prepareStatement(INSERT_NEW_TRANSACTION, Statement.RETURN_GENERATED_KEYS);
 
             return true;
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("Couldn't connect to database: " + e.getMessage());
             e.getMessage();
             return false;
@@ -154,25 +154,25 @@ public class Datasource {
     }
 
     // Close Connection
-    public void close(){
-        try{
-            if(queryTransactionTypeID != null){
+    public void close() {
+        try {
+            if (queryTransactionTypeID != null) {
                 queryTransactionTypeID.close();
             }
-            if(queryAccountID != null){
+            if (queryAccountID != null) {
                 queryAccountID.close();
             }
-            if(queryBranchID != null){
+            if (queryBranchID != null) {
                 queryBranchID.close();
             }
-            if(queryEmployeeID != null){
+            if (queryEmployeeID != null) {
                 queryEmployeeID.close();
             }
 
-            if(queryAccountNumberByName != null){
+            if (queryAccountNumberByName != null) {
                 queryAccountNumberByName.close();
             }
-            if(insertTransaction != null){
+            if (insertTransaction != null) {
                 insertTransaction.close();
             }
 
@@ -180,106 +180,100 @@ public class Datasource {
             if (connection != null) {
                 connection.close();
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("Couldn't close connection: " + e.getMessage());
         }
     }
-    public int queryTransactionTypeID(String type){
-        try{
-            queryTransactionTypeID.setString(1,type);
-            ResultSet resultSet = queryTransactionTypeID.executeQuery();
 
-            int typeID = resultSet.getInt(1);
-            return typeID;
-        }catch (SQLException e){
-            System.out.println("Query failed: " + e.getMessage());
-            return -1;
-        }
+    public int queryTransactionTypeID(String type) throws Exception {
+        queryTransactionTypeID.setString(1, type);
+        ResultSet resultSet = queryTransactionTypeID.executeQuery();
+
+        int typeID = resultSet.getInt(1);
+        return typeID;
     }
-    public int queryAccountID(int accountNumber){
-        try{
-            queryAccountID.setInt(1,accountNumber);
-            ResultSet resultSet = queryAccountID.executeQuery();
 
-            int accountID = resultSet.getInt(1);
-            return accountID;
-        }catch (SQLException e){
-            System.out.println("Query failed: " + e.getMessage());
-            return -1;
-        }
+    public int queryAccountID(int accountNumber) throws Exception {
+
+        queryAccountID.setInt(1, accountNumber);
+        ResultSet resultSet = queryAccountID.executeQuery();
+
+        int accountID = resultSet.getInt(1);
+        return accountID;
+
     }
-    public int queryBranchID(String branchName){
-        try{
-            queryBranchID.setString(1,branchName);
-            ResultSet resultSet = queryBranchID.executeQuery();
 
-            int brnachID = resultSet.getInt(1);
-            return brnachID;
-        }catch (SQLException e){
-            System.out.println("Query failed: " + e.getMessage());
-            return -1;
-        }
+    public int queryBranchID(String branchName) throws Exception {
+
+        queryBranchID.setString(1, branchName);
+        ResultSet resultSet = queryBranchID.executeQuery();
+
+        int branchID = resultSet.getInt(1);
+        return branchID;
+
     }
-    public int queryEmployeeID(String lastName){
-        try{
-            queryEmployeeID.setString(1,lastName);
-            ResultSet resultSet = queryEmployeeID.executeQuery();
 
-            int employeeID = resultSet.getInt(1);
-            return employeeID;
-        }catch (SQLException e){
-            System.out.println("Query failed: " + e.getMessage());
-            return -1;
-        }
+    public int queryEmployeeID(String lastName) throws Exception {
+
+        queryEmployeeID.setString(1, lastName);
+        ResultSet resultSet = queryEmployeeID.executeQuery();
+
+        int employeeID = resultSet.getInt(1);
+        return employeeID;
+
     }
 
 
-
-
-    public int queryAccountNumberByName(String firstName, String lastName){
-        try{
-            queryAccountNumberByName.setString(1,firstName);
-            queryAccountNumberByName.setString(2,lastName);
+    public int queryAccountNumberByName(String firstName, String lastName) {
+        try {
+            queryAccountNumberByName.setString(1, firstName);
+            queryAccountNumberByName.setString(2, lastName);
             ResultSet resultSet = queryAccountNumberByName.executeQuery();
 
             int accountNumber = resultSet.getInt(1);
             return accountNumber;
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("Query failed: " + e.getMessage());
             return -1;
         }
     }
-//    public void insertNewTransaction(String accountNumber,String branchName,String transactionType,String date, String time, String employeeName, double amount){
-    public void insertNewTransaction(){
-    try {
+
+    public void insertNewTransaction(int accountNumber, String branchName, String transactionType, String transDate, String transTime, String employeeLastName, double amount) {
+        try {
+            int accountId = queryAccountID(accountNumber);
+            int branchId = queryBranchID(branchName);
+            int transtypeId = queryTransactionTypeID(transactionType);
+            int employeeId = queryEmployeeID(employeeLastName);
+
             connection.setAutoCommit(false);
-            insertTransaction.setInt(1,2);
-            insertTransaction.setInt(2,103);
-            insertTransaction.setInt(3,2);
-            insertTransaction.setString(4,"2020/07/12");
-            insertTransaction.setString(5,"12:30 PM");
-            insertTransaction.setInt(6, 5);
-            insertTransaction.setDouble(7, -200);
+            insertTransaction.setInt(1, accountId);
+            insertTransaction.setInt(2, branchId);
+            insertTransaction.setInt(3, transtypeId);
+            insertTransaction.setString(4, transDate);
+            insertTransaction.setString(5, transTime);
+            insertTransaction.setInt(6, employeeId);
+            insertTransaction.setDouble(7, amount);
 
             int affectedRows = insertTransaction.executeUpdate();
-            if(affectedRows == 1) {
+            if (affectedRows == 1) {
                 System.out.println("Transaction Insert Succeed");
                 connection.commit();
             } else {
                 throw new SQLException("The transaction insert failed");
             }
-        }catch (Exception e){
+
+        } catch (Exception e) {
             System.out.println("Insert Transaction exception: " + e.getMessage());
             try {
                 System.out.println("Performing rollback");
                 connection.rollback();
-            } catch(SQLException e2) {
+            } catch (SQLException e2) {
                 System.out.println("Oh boy! Things are really bad! " + e2.getMessage());
-            }finally {
+            } finally {
                 try {
                     System.out.println("Resetting default commit behavior");
                     connection.setAutoCommit(true);
-                } catch(SQLException e1) {
+                } catch (SQLException e1) {
                     System.out.println("Couldn't reset auto-commit! " + e1.getMessage());
                 }
             }
