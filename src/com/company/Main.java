@@ -11,8 +11,8 @@ public class Main {
             return;
         }
 
-        queryAccountNumber(datasource);
-
+//        queryAccountNumber(datasource);
+datasource.insertNewTransaction();
 
         // Close connection
         datasource.close();

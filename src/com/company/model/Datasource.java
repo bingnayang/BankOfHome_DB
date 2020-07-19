@@ -101,13 +101,7 @@ public class Datasource {
         "SELECT "+TABLE_EMPLOYEE+"."+COLUMN_EMPLOYEE_ID+
             " FROM "+TABLE_EMPLOYEE+
             " WHERE "+TABLE_EMPLOYEE+"."+COLUMN_EMPLOYEE_LAST_NAME+"=?";
-
-
-//    SELECT account.account_Number
-//    FROM account
-//    INNER JOIN customer
-//    WHERE customer.first_Name = "Mary" AND customer.last_Name = "Anderson"
-//    AND customer.customer_ID = account.customer_ID
+    //
     private static final String QUERY_ACCOUNT_NUMBER_BY_NAME =
         "SELECT "+TABLE_ACCOUNT+"."+COLUMN_ACCOUNT_NUMBER+
             " FROM "+TABLE_ACCOUNT+
@@ -115,6 +109,18 @@ public class Datasource {
             " WHERE "+TABLE_CUSTOMER+"."+COLUMN_CUSTOMER_FIRST_NAME+"=?"+
             " AND "+TABLE_CUSTOMER+"."+COLUMN_CUSTOMER_LAST_NAME+"=?"+
             " AND "+TABLE_CUSTOMER+"."+COLUMN_CUSTOMER_ID+" = "+TABLE_ACCOUNT+"."+COLUMN_ACCOUNT_CUSTOMER_ID;
+    //
+    private static final String INSERT_NEW_TRANSACTION =
+            "INSERT INTO "+TABLE_TRANSACTION+" ("+
+                    COLUMN_TRANSACTION_ACCOUNT_ID+","+
+                    COLUMN_TRANSACTION_BRANCH_ID+","+
+                    COLUMN_TRANSACTION_TYPE_ID+","+
+                    COLUMN_TRANSACTION_DATE+","+
+                    COLUMN_TRANSACTION_TIME+","+
+                    COLUMN_TRANSACTION_EMPLOYEE_ID+","+
+                    COLUMN_TRANSACTION_AMOUNT+
+                    ") VALUES(?,?,?,?,?,?,?)";
+
 
     private Connection connection;
 
@@ -124,6 +130,7 @@ public class Datasource {
     private PreparedStatement queryEmployeeID;
 
     private PreparedStatement queryAccountNumberByName;
+    private PreparedStatement insertTransaction;
 
     // Open Connection
     public boolean open(){
@@ -136,6 +143,7 @@ public class Datasource {
             queryEmployeeID = connection.prepareStatement(QUERY_EMPLOYEE_ID);
 
             queryAccountNumberByName = connection.prepareStatement(QUERY_ACCOUNT_NUMBER_BY_NAME);
+            insertTransaction = connection.prepareStatement(INSERT_NEW_TRANSACTION,Statement.RETURN_GENERATED_KEYS);
 
             return true;
         }catch (SQLException e){
@@ -163,6 +171,9 @@ public class Datasource {
 
             if(queryAccountNumberByName != null){
                 queryAccountNumberByName.close();
+            }
+            if(insertTransaction != null){
+                insertTransaction.close();
             }
 
             // Close Connection
@@ -236,6 +247,42 @@ public class Datasource {
         }catch (SQLException e){
             System.out.println("Query failed: " + e.getMessage());
             return -1;
+        }
+    }
+//    public void insertNewTransaction(String accountNumber,String branchName,String transactionType,String date, String time, String employeeName, double amount){
+    public void insertNewTransaction(){
+    try {
+            connection.setAutoCommit(false);
+            insertTransaction.setInt(1,2);
+            insertTransaction.setInt(2,103);
+            insertTransaction.setInt(3,2);
+            insertTransaction.setString(4,"2020/07/12");
+            insertTransaction.setString(5,"12:30 PM");
+            insertTransaction.setInt(6, 5);
+            insertTransaction.setDouble(7, -200);
+
+            int affectedRows = insertTransaction.executeUpdate();
+            if(affectedRows == 1) {
+                System.out.println("Transaction Insert Succeed");
+                connection.commit();
+            } else {
+                throw new SQLException("The transaction insert failed");
+            }
+        }catch (Exception e){
+            System.out.println("Insert Transaction exception: " + e.getMessage());
+            try {
+                System.out.println("Performing rollback");
+                connection.rollback();
+            } catch(SQLException e2) {
+                System.out.println("Oh boy! Things are really bad! " + e2.getMessage());
+            }finally {
+                try {
+                    System.out.println("Resetting default commit behavior");
+                    connection.setAutoCommit(true);
+                } catch(SQLException e1) {
+                    System.out.println("Couldn't reset auto-commit! " + e1.getMessage());
+                }
+            }
         }
     }
 }
