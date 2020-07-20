@@ -46,7 +46,7 @@ public class Main {
                     withdrawTransaction(datasource,currentDate,currentTime);
                     break;
                 case 5:
-                    System.out.println("Goodbye");
+                    System.out.println("Goodbye!! Have a Wealthy Day :)");
                     break;
                 default:
                     System.out.println("Not an option");
@@ -107,27 +107,20 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter Account Number: ");
         int accountNumber = scanner.nextInt();
-        System.out.println("Enter Branch Name: ");
-        scanner.nextLine();
-        String branchName = scanner.nextLine();
         System.out.println("Employee Last Name: ");
         String employeeLastName = scanner.next();
         System.out.println("Deposit Amount: ");
         double transAmount = scanner.nextDouble();
-
-        datasource.insertNewTransaction(accountNumber,branchName,"deposit",currentDate,currentTime,employeeLastName,transAmount);
+        datasource.insertNewTransaction(accountNumber,"deposit",currentDate,currentTime,employeeLastName,transAmount);
     }
     public static void withdrawTransaction(Datasource datasource,String currentDate, String currentTime){
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter Account Number: ");
         int accountNumber = scanner.nextInt();
-        System.out.println("Enter Branch Name: ");
-        scanner.nextLine();
-        String branchName = scanner.nextLine();
         System.out.println("Employee Last Name: ");
         String employeeLastName = scanner.next();
         System.out.println("Withdraw Amount: ");
-        double transAmount = scanner.nextDouble();
-        datasource.insertNewTransaction(accountNumber,branchName,"withdraw",currentDate,currentTime,employeeLastName,transAmount);
+        double transAmount = scanner.nextDouble()*(-1);
+        datasource.insertNewTransaction(accountNumber,"withdraw",currentDate,currentTime,employeeLastName,transAmount);
     }
 }

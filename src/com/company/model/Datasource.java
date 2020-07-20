@@ -131,6 +131,12 @@ public class Datasource {
             "SELECT *"+
                     " FROM "+TABLE_TRANSACTION_VIEW+
                     " WHERE "+TABLE_TRANSACTION_VIEW+"."+COLUMN_TRANS_VIEW_ACCOUNT_NUMBER+"=?";
+    // Query employee branch Id
+    private static final String QUERY_EMPLOYEE_BRANCH_ID =
+            "SELECT "+TABLE_EMPLOYEE+"."+COLUMN_EMPLOYEE_BRANCH_ID+
+                    " FROM "+TABLE_EMPLOYEE+
+                    " WHERE "+TABLE_EMPLOYEE+"."+COLUMN_EMPLOYEE_LAST_NAME+"=?";
+
     // Insert new transaction
     private static final String INSERT_NEW_TRANSACTION =
             "INSERT INTO " + TABLE_TRANSACTION + " (" +
@@ -149,6 +155,7 @@ public class Datasource {
     private PreparedStatement queryAccountID;
     private PreparedStatement queryBranchID;
     private PreparedStatement queryEmployeeID;
+    private PreparedStatement queryEmployeeBranchID;
     private PreparedStatement queryTransactionsAmountSum;
     private PreparedStatement queryTransactionView;
     private PreparedStatement queryAccountNumberByName;
@@ -163,6 +170,7 @@ public class Datasource {
             queryAccountID = connection.prepareStatement(QUERY_ACCOUNT_ID);
             queryBranchID = connection.prepareStatement(QUERY_BRANCH_ID);
             queryEmployeeID = connection.prepareStatement(QUERY_EMPLOYEE_ID);
+            queryEmployeeBranchID = connection.prepareStatement(QUERY_EMPLOYEE_BRANCH_ID);
             queryTransactionsAmountSum = connection.prepareStatement(QUERY_TRANSACTIONS_AMOUNT_SUM);
             queryTransactionView = connection.prepareStatement(QUERY_TRANSACTION_VIEW);
             queryAccountNumberByName = connection.prepareStatement(QUERY_ACCOUNT_NUMBER_BY_NAME);
@@ -190,6 +198,9 @@ public class Datasource {
             }
             if (queryEmployeeID != null) {
                 queryEmployeeID.close();
+            }
+            if(queryEmployeeBranchID != null){
+                queryEmployeeBranchID.close();
             }
             if (queryTransactionsAmountSum != null){
                 queryTransactionsAmountSum.close();
@@ -261,6 +272,12 @@ public class Datasource {
             return -1;
         }
     }
+    public int queryEmployeeBranch(String lastName)throws Exception{
+        queryEmployeeBranchID.setString(1,lastName);
+        ResultSet resultSet = queryEmployeeBranchID.executeQuery();
+        int branchId = resultSet.getInt(1);
+        return branchId;
+    }
     public List<TransactionView> queryTransactionView(int accountNumber){
         try{
             queryTransactionView.setInt(1,accountNumber);
@@ -299,10 +316,10 @@ public class Datasource {
         }
     }
 
-    public void insertNewTransaction(int accountNumber, String branchName, String transactionType, String transDate, String transTime, String employeeLastName, double amount) {
+    public void insertNewTransaction(int accountNumber, String transactionType, String transDate, String transTime, String employeeLastName, double amount) {
         try {
             int accountId = queryAccountID(accountNumber);
-            int branchId = queryBranchID(branchName);
+            int branchId = queryEmployeeBranch(employeeLastName);
             int transTypeId = queryTransactionTypeID(transactionType);
             int employeeId = queryEmployeeID(employeeLastName);
 
