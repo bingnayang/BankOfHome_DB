@@ -1,19 +1,37 @@
 package com.company;
 
 import com.company.model.Datasource;
+import com.company.model.TransactionView;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
         Datasource datasource = new Datasource();
+        // Get current date and time
+        LocalDate localDate = LocalDate.now();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        LocalTime localTime = LocalTime.now();
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm a");
+
+        String currentDate = localDate.format(dateFormatter);
+        String currentTime = localTime.format(timeFormatter);
+        // Scanner
         Scanner scanner = new Scanner(System.in);
         int option;
         if(!datasource.open()){
             System.out.println("Could not open datasource");
             return;
         }
+        System.out.println("========Welcome to Bank Of Home========");
+        System.out.println("Date: "+localDate.format(dateFormatter)+" Time: "+localTime.format(timeFormatter));
         do{
             tellerMenu();
             option = scanner.nextInt();
@@ -25,10 +43,10 @@ public class Main {
                     searchTransactionsBalance(datasource);
                     break;
                 case 3:
-                    depositTransaction(datasource);
+                    depositTransaction(datasource,currentDate,currentTime);
                     break;
                 case 4:
-                    withdrawTransaction(datasource);
+                    withdrawTransaction(datasource,currentDate,currentTime);
                     break;
                 case 5:
                     System.out.println("Goodbye");
@@ -64,26 +82,29 @@ public class Main {
         }
     }
     public static void searchTransactionsBalance(Datasource datasource){
+        List<TransactionView> transactionViewList = datasource.queryTransactionView();
+        if(transactionViewList.isEmpty()){
+            System.out.println("Couldn't find");
+            return;
+        }
+        System.out.println("Account Number: "+transactionViewList.get(0).getAccount_Number());
 
+        for(int i=0; i<transactionViewList.size();i++){
+
+        }
     }
-    public static void depositTransaction(Datasource datasource){
-        int accountNumber = 12300001;
-        String branchName = "Home Branch";
-        String transactionType = "deposit";
-        String transDate = "2020/07/12";
-        String transTime = "03:10 PM";
-        String employeeLastName = "Adam";
-        double transAmount = 350.00;
-        datasource.insertNewTransaction(accountNumber,branchName,transactionType,transDate,transTime,employeeLastName,transAmount);
+    public static void depositTransaction(Datasource datasource,String currentDate, String currentTime){
+        int accountNumber = 12300003;
+        String branchName = "Philly Branch";
+        String employeeLastName = "Lin";
+        double transAmount = 420.00;
+        datasource.insertNewTransaction(accountNumber,branchName,"deposit",currentDate,currentTime,employeeLastName,transAmount);
     }
-    public static void withdrawTransaction(Datasource datasource){
-        int accountNumber = 12300001;
-        String branchName = "Home Branch";
-        String transactionType = "withdraw";
-        String transDate = "2020/07/05";
-        String transTime = "02:15 PM";
-        String employeeLastName = "Adam";
-        double transAmount = -100.00;
-        datasource.insertNewTransaction(accountNumber,branchName,transactionType,transDate,transTime,employeeLastName,transAmount);
+    public static void withdrawTransaction(Datasource datasource,String currentDate, String currentTime){
+        int accountNumber = 12300003;
+        String branchName = "Philly Branch";
+        String employeeLastName = "Bucker";
+        double transAmount = -290.00;
+        datasource.insertNewTransaction(accountNumber,branchName,"withdraw",currentDate,currentTime,employeeLastName,transAmount);
     }
 }

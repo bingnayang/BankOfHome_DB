@@ -1,6 +1,8 @@
 package com.company.model;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Datasource {
     // Database name
@@ -78,6 +80,15 @@ public class Datasource {
     private static final String TABLE_TRANSACTION_TYPE = "transaction_type";
     private static final String COLUMN_TRANS_TYPE_ID = "transaction_Type_ID";
     private static final String COLUMN_TRANS_TYPE_NAME = "transaction_Name";
+    // TABLE: Transaction_View
+    private static final String TABLE_TRANSACTION_VIEW = "transactionView";
+    private static final String COLUMN_TRANS_VIEW_TRANSACTION_ID = "transaction_ID";
+    private static final String COLUMN_TRANS_VIEW_ACCOUNT_NUMBER = "account_Number";
+    private static final String COLUMN_TRANS_VIEW_BRANCH_NAME = "branch_Name";
+    private static final String COLUMN_TRANS_VIEW_DATE = "date";
+    private static final String COLUMN_TRANS_VIEW_TIME = "time";
+    private static final String COLUMN_TRANS_VIEW_EMPLOYEE_LAST_NAME = "last_Name";
+    private static final String COLUMN_TRANS_VIEW_AMOUNT = "amount";
 
     /**
      * DB Query
@@ -101,7 +112,7 @@ public class Datasource {
             "SELECT " + TABLE_EMPLOYEE + "." + COLUMN_EMPLOYEE_ID +
                     " FROM " + TABLE_EMPLOYEE +
                     " WHERE " + TABLE_EMPLOYEE + "." + COLUMN_EMPLOYEE_LAST_NAME + "=?";
-    //
+    // Query account number by customer name
     private static final String QUERY_ACCOUNT_NUMBER_BY_NAME =
             "SELECT " + TABLE_ACCOUNT + "." + COLUMN_ACCOUNT_NUMBER +
                     " FROM " + TABLE_ACCOUNT +
@@ -109,7 +120,12 @@ public class Datasource {
                     " WHERE " + TABLE_CUSTOMER + "." + COLUMN_CUSTOMER_FIRST_NAME + "=?" +
                     " AND " + TABLE_CUSTOMER + "." + COLUMN_CUSTOMER_LAST_NAME + "=?" +
                     " AND " + TABLE_CUSTOMER + "." + COLUMN_CUSTOMER_ID + " = " + TABLE_ACCOUNT + "." + COLUMN_ACCOUNT_CUSTOMER_ID;
-    //
+    // Query all transactions by account number
+    private static final String QUERY_TRANSACTION_VIEW =
+            "SELECT *"+
+                    " FROM "+TABLE_TRANSACTION_VIEW+
+                    " WHERE "+TABLE_TRANSACTION_VIEW+"."+COLUMN_TRANS_VIEW_ACCOUNT_NUMBER+"=?";
+    // Insert new transaction
     private static final String INSERT_NEW_TRANSACTION =
             "INSERT INTO " + TABLE_TRANSACTION + " (" +
                     COLUMN_TRANSACTION_ACCOUNT_ID + "," +
@@ -121,7 +137,6 @@ public class Datasource {
                     COLUMN_TRANSACTION_AMOUNT +
                     ") VALUES(?,?,?,?,?,?,?)";
 
-
     private Connection connection;
 
     private PreparedStatement queryTransactionTypeID;
@@ -129,6 +144,7 @@ public class Datasource {
     private PreparedStatement queryBranchID;
     private PreparedStatement queryEmployeeID;
 
+    private PreparedStatement queryTransactionView;
     private PreparedStatement queryAccountNumberByName;
     private PreparedStatement insertTransaction;
 
@@ -142,6 +158,7 @@ public class Datasource {
             queryBranchID = connection.prepareStatement(QUERY_BRANCH_ID);
             queryEmployeeID = connection.prepareStatement(QUERY_EMPLOYEE_ID);
 
+            queryTransactionView = connection.prepareStatement(QUERY_TRANSACTION_VIEW);
             queryAccountNumberByName = connection.prepareStatement(QUERY_ACCOUNT_NUMBER_BY_NAME);
             insertTransaction = connection.prepareStatement(INSERT_NEW_TRANSACTION, Statement.RETURN_GENERATED_KEYS);
 
@@ -169,6 +186,9 @@ public class Datasource {
                 queryEmployeeID.close();
             }
 
+            if (queryTransactionView != null) {
+                queryTransactionView.close();
+            }
             if (queryAccountNumberByName != null) {
                 queryAccountNumberByName.close();
             }
@@ -223,7 +243,30 @@ public class Datasource {
 
     }
 
+    public List<TransactionView> queryTransactionView(){
+        try{
+            queryTransactionView.setInt(1,12300001);
 
+            ResultSet resultSet = queryTransactionView.executeQuery();
+            List<TransactionView> transactionViewList = new ArrayList<>();
+            while(resultSet.next()){
+                TransactionView transactionView = new TransactionView();
+                transactionView.setTransaction_ID(resultSet.getInt(1));
+                transactionView.setAccount_Number(resultSet.getInt(2));
+                transactionView.setBranch_Name(resultSet.getString(3));
+                transactionView.setTrans_Date(resultSet.getString(4));
+                transactionView.setTrans_Time(resultSet.getString(5));
+                transactionView.setEmployee_LastName(resultSet.getString(6));
+                transactionView.setAmount(resultSet.getDouble(7));
+                transactionViewList.add(transactionView);
+            }
+            return transactionViewList;
+
+        }catch (SQLException e){
+            System.out.println("Query failed: " + e.getMessage());
+            return null;
+        }
+    }
     public int queryAccountNumberByName(String firstName, String lastName) {
         try {
             queryAccountNumberByName.setString(1, firstName);
