@@ -261,9 +261,9 @@ public class Datasource {
             return -1;
         }
     }
-    public List<TransactionView> queryTransactionView(){
+    public List<TransactionView> queryTransactionView(int accountNumber){
         try{
-            queryTransactionView.setInt(1,12300001);
+            queryTransactionView.setInt(1,accountNumber);
 
             ResultSet resultSet = queryTransactionView.executeQuery();
             List<TransactionView> transactionViewList = new ArrayList<>();

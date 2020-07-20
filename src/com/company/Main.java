@@ -67,8 +67,12 @@ public class Main {
         System.out.println("Select One: ");
     }
     public static void searchAccountNumber(Datasource datasource){
-        String firstName = "Mary";
-        String lastName = "Anderson";
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter Customer First Name: ");
+        String firstName = scanner.next();
+        System.out.println("Enter Customer Last Name: ");
+        String lastName = scanner.next();
+
         int temp = datasource.queryAccountNumberByName(firstName,lastName);
         if(temp < 0){
             System.out.println("No such customer in database");
@@ -78,7 +82,11 @@ public class Main {
         }
     }
     public static void searchTransactionsAndBalance(Datasource datasource){
-        List<TransactionView> transactionViewList = datasource.queryTransactionView();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter Account Number: ");
+        int accountNumber = scanner.nextInt();
+
+        List<TransactionView> transactionViewList = datasource.queryTransactionView(accountNumber);
         if(transactionViewList.isEmpty()){
             System.out.println("Couldn't find");
             return;
@@ -96,17 +104,30 @@ public class Main {
         System.out.println("Balance: $"+datasource.queryAccountBalance());
     }
     public static void depositTransaction(Datasource datasource,String currentDate, String currentTime){
-        int accountNumber = 12300003;
-        String branchName = "Philly Branch";
-        String employeeLastName = "Lin";
-        double transAmount = 420.00;
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter Account Number: ");
+        int accountNumber = scanner.nextInt();
+        System.out.println("Enter Branch Name: ");
+        scanner.nextLine();
+        String branchName = scanner.nextLine();
+        System.out.println("Employee Last Name: ");
+        String employeeLastName = scanner.next();
+        System.out.println("Deposit Amount: ");
+        double transAmount = scanner.nextDouble();
+
         datasource.insertNewTransaction(accountNumber,branchName,"deposit",currentDate,currentTime,employeeLastName,transAmount);
     }
     public static void withdrawTransaction(Datasource datasource,String currentDate, String currentTime){
-        int accountNumber = 12300003;
-        String branchName = "Philly Branch";
-        String employeeLastName = "Bucker";
-        double transAmount = -290.00;
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter Account Number: ");
+        int accountNumber = scanner.nextInt();
+        System.out.println("Enter Branch Name: ");
+        scanner.nextLine();
+        String branchName = scanner.nextLine();
+        System.out.println("Employee Last Name: ");
+        String employeeLastName = scanner.next();
+        System.out.println("Withdraw Amount: ");
+        double transAmount = scanner.nextDouble();
         datasource.insertNewTransaction(accountNumber,branchName,"withdraw",currentDate,currentTime,employeeLastName,transAmount);
     }
 }
