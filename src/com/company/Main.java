@@ -3,11 +3,9 @@ package com.company;
 import com.company.model.Datasource;
 import com.company.model.TransactionView;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -40,7 +38,7 @@ public class Main {
                     searchAccountNumber(datasource);
                     break;
                 case 2:
-                    searchTransactionsBalance(datasource);
+                    searchTransactionsAndBalance(datasource);
                     break;
                 case 3:
                     depositTransaction(datasource,currentDate,currentTime);
@@ -55,7 +53,6 @@ public class Main {
                     System.out.println("Not an option");
                     break;
             }
-
         }while (option != 5);
 
         // Close connection
@@ -81,7 +78,7 @@ public class Main {
             System.out.println("Account Number:"+temp);
         }
     }
-    public static void searchTransactionsBalance(Datasource datasource){
+    public static void searchTransactionsAndBalance(Datasource datasource){
         List<TransactionView> transactionViewList = datasource.queryTransactionView();
         if(transactionViewList.isEmpty()){
             System.out.println("Couldn't find");
@@ -90,8 +87,14 @@ public class Main {
         System.out.println("Account Number: "+transactionViewList.get(0).getAccount_Number());
 
         for(int i=0; i<transactionViewList.size();i++){
-
+            System.out.println("Transaction "+(i+1)+
+                    "\nDate: "+transactionViewList.get(i).getTrans_Date()+
+                    "\nTime: "+transactionViewList.get(i).getTrans_Time()+
+                    "\nBranch Name: "+transactionViewList.get(i).getBranch_Name()+
+                    "\nEmployee Name: "+transactionViewList.get(i).getEmployee_LastName()+
+                    "\nAmount: $"+transactionViewList.get(i).getAmount()+"\n");
         }
+        System.out.println("Balance: $"+datasource.queryAccountBalance());
     }
     public static void depositTransaction(Datasource datasource,String currentDate, String currentTime){
         int accountNumber = 12300003;

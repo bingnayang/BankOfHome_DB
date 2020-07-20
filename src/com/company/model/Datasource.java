@@ -112,6 +112,12 @@ public class Datasource {
             "SELECT " + TABLE_EMPLOYEE + "." + COLUMN_EMPLOYEE_ID +
                     " FROM " + TABLE_EMPLOYEE +
                     " WHERE " + TABLE_EMPLOYEE + "." + COLUMN_EMPLOYEE_LAST_NAME + "=?";
+    // Query transaction amount sum
+    private static final String QUERY_TRANSACTIONS_AMOUNT_SUM =
+            "SELECT SUM("+COLUMN_TRANS_VIEW_AMOUNT+")"+
+                    " FROM "+TABLE_TRANSACTION_VIEW+
+                    " WHERE "+TABLE_TRANSACTION_VIEW+"."+COLUMN_TRANS_VIEW_ACCOUNT_NUMBER+"=?";
+
     // Query account number by customer name
     private static final String QUERY_ACCOUNT_NUMBER_BY_NAME =
             "SELECT " + TABLE_ACCOUNT + "." + COLUMN_ACCOUNT_NUMBER +
@@ -143,7 +149,7 @@ public class Datasource {
     private PreparedStatement queryAccountID;
     private PreparedStatement queryBranchID;
     private PreparedStatement queryEmployeeID;
-
+    private PreparedStatement queryTransactionsAmountSum;
     private PreparedStatement queryTransactionView;
     private PreparedStatement queryAccountNumberByName;
     private PreparedStatement insertTransaction;
@@ -157,7 +163,7 @@ public class Datasource {
             queryAccountID = connection.prepareStatement(QUERY_ACCOUNT_ID);
             queryBranchID = connection.prepareStatement(QUERY_BRANCH_ID);
             queryEmployeeID = connection.prepareStatement(QUERY_EMPLOYEE_ID);
-
+            queryTransactionsAmountSum = connection.prepareStatement(QUERY_TRANSACTIONS_AMOUNT_SUM);
             queryTransactionView = connection.prepareStatement(QUERY_TRANSACTION_VIEW);
             queryAccountNumberByName = connection.prepareStatement(QUERY_ACCOUNT_NUMBER_BY_NAME);
             insertTransaction = connection.prepareStatement(INSERT_NEW_TRANSACTION, Statement.RETURN_GENERATED_KEYS);
@@ -185,7 +191,9 @@ public class Datasource {
             if (queryEmployeeID != null) {
                 queryEmployeeID.close();
             }
-
+            if (queryTransactionsAmountSum != null){
+                queryTransactionsAmountSum.close();
+            }
             if (queryTransactionView != null) {
                 queryTransactionView.close();
             }
@@ -242,7 +250,17 @@ public class Datasource {
         return employeeID;
 
     }
-
+    public double queryAccountBalance(){
+        try{
+            queryTransactionsAmountSum.setInt(1,12300001);
+            ResultSet resultSet = queryTransactionsAmountSum.executeQuery();
+            double balance = resultSet.getDouble(1);
+            return balance;
+        }catch (SQLException e){
+            System.out.println("Query failed: " + e.getMessage());
+            return -1;
+        }
+    }
     public List<TransactionView> queryTransactionView(){
         try{
             queryTransactionView.setInt(1,12300001);
