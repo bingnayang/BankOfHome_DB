@@ -18,7 +18,6 @@ public class Main {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         LocalTime localTime = LocalTime.now();
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm a");
-
         String currentDate = localDate.format(dateFormatter);
         String currentTime = localTime.format(timeFormatter);
         // Scanner
