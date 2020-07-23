@@ -139,7 +139,9 @@ public class Datasource {
                     " WHERE "+TABLE_TRANSACTION_VIEW+"."+COLUMN_TRANS_VIEW_ACCOUNT_NUMBER+"=?";
     // Query all customer name and account number
     private static final String QUERY_ACCOUNT_NUMBER_AND_NAME =
-            "";
+            "SELECT "+TABLE_CUSTOMER+"."+COLUMN_CUSTOMER_FIRST_NAME+","+TABLE_CUSTOMER+"."+COLUMN_CUSTOMER_LAST_NAME+","+TABLE_ACCOUNT+"."+COLUMN_ACCOUNT_NUMBER+
+            " FROM "+TABLE_CUSTOMER+
+            " INNER JOIN "+TABLE_ACCOUNT+" ON "+TABLE_ACCOUNT+"."+COLUMN_ACCOUNT_CUSTOMER_ID+"="+TABLE_CUSTOMER+"."+COLUMN_CUSTOMER_ID;
 
     // Insert new transaction
     private static final String INSERT_NEW_TRANSACTION =
@@ -163,6 +165,7 @@ public class Datasource {
     private PreparedStatement queryTransactionsAmountSum;
     private PreparedStatement queryTransactionView;
     private PreparedStatement queryAccountNumberByName;
+    private PreparedStatement queryCustomerAccountNumberAndName;
     private PreparedStatement insertTransaction;
 
     // Open Connection
@@ -178,6 +181,7 @@ public class Datasource {
             queryTransactionsAmountSum = connection.prepareStatement(QUERY_TRANSACTIONS_AMOUNT_SUM);
             queryTransactionView = connection.prepareStatement(QUERY_TRANSACTION_VIEW);
             queryAccountNumberByName = connection.prepareStatement(QUERY_ACCOUNT_NUMBER_BY_NAME);
+            queryCustomerAccountNumberAndName = connection.prepareStatement(QUERY_ACCOUNT_NUMBER_AND_NAME);
             insertTransaction = connection.prepareStatement(INSERT_NEW_TRANSACTION, Statement.RETURN_GENERATED_KEYS);
 
             return true;
@@ -214,6 +218,9 @@ public class Datasource {
             }
             if (queryAccountNumberByName != null) {
                 queryAccountNumberByName.close();
+            }
+            if(queryCustomerAccountNumberAndName != null){
+                queryCustomerAccountNumberAndName.close();
             }
             if (insertTransaction != null) {
                 insertTransaction.close();
@@ -359,6 +366,20 @@ public class Datasource {
                     System.out.println("Couldn't reset auto-commit! " + e1.getMessage());
                 }
             }
+        }
+    }
+
+    public List<String> queryAllCustomerAccountNumberAndName(){
+        try{
+            ResultSet resultSet = queryCustomerAccountNumberAndName.executeQuery();
+            List<String> accountList = new ArrayList<>();
+            while(resultSet.next()){
+                accountList.add("Name: "+resultSet.getString(1)+" "+resultSet.getString(2)+"\nAccount Number: "+resultSet.getInt(3)+"\n");
+            }
+            return accountList;
+        }catch (SQLException e){
+            System.out.println("Query failed: " + e.getMessage());
+            return null;
         }
     }
 }

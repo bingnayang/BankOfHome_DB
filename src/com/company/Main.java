@@ -58,6 +58,7 @@ public class Main {
             option = scanner.nextInt();
             switch (option){
                 case 1:
+                    listCustomerAccountNumberName(datasource);
                     break;
                 case 2:
                     break;
@@ -155,7 +156,15 @@ public class Main {
         datasource.insertNewTransaction(accountNumber,"withdraw",currentDate,currentTime,employeeLastName,transAmount);
     }
     // Methods for Manager Mode
-
+    public static void listCustomerAccountNumberName(Datasource datasource){
+        List<String> customerAccountList = datasource.queryAllCustomerAccountNumberAndName();
+        if(customerAccountList.isEmpty()){
+            System.out.println("Empty....");
+        }
+        for(int i=0;i<customerAccountList.size();i++){
+            System.out.println((i+1)+": "+customerAccountList.get(i));
+        }
+    }
 
 
 }
