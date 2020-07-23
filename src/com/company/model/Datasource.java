@@ -112,6 +112,12 @@ public class Datasource {
             "SELECT " + TABLE_EMPLOYEE + "." + COLUMN_EMPLOYEE_ID +
                     " FROM " + TABLE_EMPLOYEE +
                     " WHERE " + TABLE_EMPLOYEE + "." + COLUMN_EMPLOYEE_LAST_NAME + "=?";
+
+    private static final String QUERY_EMPLOYEE_BRANCH_ID =
+            "SELECT "+TABLE_EMPLOYEE+"."+COLUMN_EMPLOYEE_BRANCH_ID+
+                    " FROM "+TABLE_EMPLOYEE+
+                    " WHERE "+TABLE_EMPLOYEE+"."+COLUMN_EMPLOYEE_LAST_NAME+"=?";
+
     // Query transaction amount sum
     private static final String QUERY_TRANSACTIONS_AMOUNT_SUM =
             "SELECT SUM("+COLUMN_TRANS_VIEW_AMOUNT+")"+
@@ -131,11 +137,9 @@ public class Datasource {
             "SELECT *"+
                     " FROM "+TABLE_TRANSACTION_VIEW+
                     " WHERE "+TABLE_TRANSACTION_VIEW+"."+COLUMN_TRANS_VIEW_ACCOUNT_NUMBER+"=?";
-    // Query employee branch Id
-    private static final String QUERY_EMPLOYEE_BRANCH_ID =
-            "SELECT "+TABLE_EMPLOYEE+"."+COLUMN_EMPLOYEE_BRANCH_ID+
-                    " FROM "+TABLE_EMPLOYEE+
-                    " WHERE "+TABLE_EMPLOYEE+"."+COLUMN_EMPLOYEE_LAST_NAME+"=?";
+    // Query all customer name and account number
+    private static final String QUERY_ACCOUNT_NUMBER_AND_NAME =
+            "";
 
     // Insert new transaction
     private static final String INSERT_NEW_TRANSACTION =

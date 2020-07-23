@@ -29,21 +29,41 @@ public class Main {
         }
         System.out.println("========Welcome to Bank Of Home========");
         System.out.println("Date: "+localDate.format(dateFormatter)+" Time: "+localTime.format(timeFormatter));
+//        do{
+//            tellerMenu();
+//            option = scanner.nextInt();
+//            switch (option){
+//                case 1:
+//                    searchAccountNumber(datasource);
+//                    break;
+//                case 2:
+//                    searchTransactionsAndBalance(datasource);
+//                    break;
+//                case 3:
+//                    depositTransaction(datasource,currentDate,currentTime);
+//                    break;
+//                case 4:
+//                    withdrawTransaction(datasource,currentDate,currentTime);
+//                    break;
+//                case 5:
+//                    System.out.println("Goodbye!! Have a Wealthy Day :)");
+//                    break;
+//                default:
+//                    System.out.println("Not an option");
+//                    break;
+//            }
+//        }while (option != 5);
         do{
-            tellerMenu();
+            managerMenu();
             option = scanner.nextInt();
             switch (option){
                 case 1:
-                    searchAccountNumber(datasource);
                     break;
                 case 2:
-                    searchTransactionsAndBalance(datasource);
                     break;
                 case 3:
-                    depositTransaction(datasource,currentDate,currentTime);
                     break;
                 case 4:
-                    withdrawTransaction(datasource,currentDate,currentTime);
                     break;
                 case 5:
                     System.out.println("Goodbye!! Have a Wealthy Day :)");
@@ -52,7 +72,7 @@ public class Main {
                     System.out.println("Not an option");
                     break;
             }
-        }while (option != 5);
+        }while(option != 5);
 
         // Close connection
         datasource.close();
@@ -66,6 +86,17 @@ public class Main {
         System.out.println("5: Quit");
         System.out.println("Select One: ");
     }
+    public static void managerMenu(){
+        System.out.println("----- Manager Mode -----");
+        System.out.println("1. List All Customer Accounts");
+        System.out.println("2. List All Employees");
+        System.out.println("3. Open New Account");
+        System.out.println("4. Add New Employee");
+        System.out.println("5: Quit");
+        System.out.println("Select One: ");
+    }
+
+    // Methods for Teller Mode
     public static void searchAccountNumber(Datasource datasource){
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter Customer First Name: ");
@@ -123,4 +154,8 @@ public class Main {
         double transAmount = scanner.nextDouble()*(-1);
         datasource.insertNewTransaction(accountNumber,"withdraw",currentDate,currentTime,employeeLastName,transAmount);
     }
+    // Methods for Manager Mode
+
+
+
 }
