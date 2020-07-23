@@ -2,6 +2,7 @@
 This application handles some basic operations of bank.
 Still in development
 
+## Tools and Technologies Used 
 * Java
 * SQLite
 * JDBC
