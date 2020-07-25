@@ -61,12 +61,15 @@ public class Main {
                     listCustomerAccountNumberName(datasource);
                     break;
                 case 2:
+                    listAllEmployee(datasource);
                     break;
                 case 3:
                     break;
                 case 4:
                     break;
                 case 5:
+                    break;
+                case 6:
                     System.out.println("Goodbye!! Have a Wealthy Day :)");
                     break;
                 default:
@@ -89,11 +92,12 @@ public class Main {
     }
     public static void managerMenu(){
         System.out.println("----- Manager Mode -----");
-        System.out.println("1. List All Customer Accounts");
-        System.out.println("2. List All Employees");
+        System.out.println("1. Display All Customer Accounts");
+        System.out.println("2. Display All Employees");
         System.out.println("3. Open New Account");
         System.out.println("4. Add New Employee");
-        System.out.println("5: Quit");
+        System.out.println("5. Edit Employee Info");
+        System.out.println("6: Quit");
         System.out.println("Select One: ");
     }
 
@@ -163,6 +167,15 @@ public class Main {
         }
         for(int i=0;i<customerAccountList.size();i++){
             System.out.println((i+1)+": "+customerAccountList.get(i));
+        }
+    }
+    public static void listAllEmployee(Datasource datasource){
+        List<String> employeeList = datasource.queryAllEmployees();
+        if(employeeList.isEmpty()){
+            System.out.println("Empty....");
+        }
+        for(int i=0;i<employeeList.size();i++){
+            System.out.println((i+1)+": "+employeeList.get(i));
         }
     }
 

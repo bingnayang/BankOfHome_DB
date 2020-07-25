@@ -142,6 +142,13 @@ public class Datasource {
             "SELECT "+TABLE_CUSTOMER+"."+COLUMN_CUSTOMER_FIRST_NAME+","+TABLE_CUSTOMER+"."+COLUMN_CUSTOMER_LAST_NAME+","+TABLE_ACCOUNT+"."+COLUMN_ACCOUNT_NUMBER+
             " FROM "+TABLE_CUSTOMER+
             " INNER JOIN "+TABLE_ACCOUNT+" ON "+TABLE_ACCOUNT+"."+COLUMN_ACCOUNT_CUSTOMER_ID+"="+TABLE_CUSTOMER+"."+COLUMN_CUSTOMER_ID;
+    // QUERY all employee name,title,branch
+    private static final String QUERY_ALL_EMPLOYEE =
+            "SELECT "+TABLE_EMPLOYEE+"."+COLUMN_CUSTOMER_FIRST_NAME+","+TABLE_EMPLOYEE+"."+COLUMN_CUSTOMER_LAST_NAME+","+TABLE_TITLE+"."+COLUMN_TITLE_NAME+","+TABLE_BRANCH+"."+COLUMN_BRANCH_NAME+
+                    " FROM "+TABLE_EMPLOYEE+
+                    " INNER JOIN "+TABLE_BRANCH+" ON "+TABLE_BRANCH+"."+COLUMN_BRANCH_ID+"="+TABLE_EMPLOYEE+"."+COLUMN_EMPLOYEE_BRANCH_ID+
+                    " INNER JOIN "+TABLE_TITLE+" ON "+TABLE_TITLE+"."+COLUMN_TITLE_ID+"="+TABLE_EMPLOYEE+"."+COLUMN_EMPLOYEE_TITLE_ID+
+                    " ORDER BY "+TABLE_EMPLOYEE+"."+COLUMN_CUSTOMER_LAST_NAME+" ASC";
 
     // Insert new transaction
     private static final String INSERT_NEW_TRANSACTION =
@@ -166,6 +173,7 @@ public class Datasource {
     private PreparedStatement queryTransactionView;
     private PreparedStatement queryAccountNumberByName;
     private PreparedStatement queryCustomerAccountNumberAndName;
+    private PreparedStatement queryAllEmployee;
     private PreparedStatement insertTransaction;
 
     // Open Connection
@@ -182,6 +190,7 @@ public class Datasource {
             queryTransactionView = connection.prepareStatement(QUERY_TRANSACTION_VIEW);
             queryAccountNumberByName = connection.prepareStatement(QUERY_ACCOUNT_NUMBER_BY_NAME);
             queryCustomerAccountNumberAndName = connection.prepareStatement(QUERY_ACCOUNT_NUMBER_AND_NAME);
+            queryAllEmployee = connection.prepareStatement(QUERY_ALL_EMPLOYEE);
             insertTransaction = connection.prepareStatement(INSERT_NEW_TRANSACTION, Statement.RETURN_GENERATED_KEYS);
 
             return true;
@@ -222,6 +231,9 @@ public class Datasource {
             if(queryCustomerAccountNumberAndName != null){
                 queryCustomerAccountNumberAndName.close();
             }
+            if(queryAllEmployee != null){
+                queryAllEmployee.close();
+            }
             if (insertTransaction != null) {
                 insertTransaction.close();
             }
@@ -242,7 +254,6 @@ public class Datasource {
         int typeID = resultSet.getInt(1);
         return typeID;
     }
-
     public int queryAccountID(int accountNumber) throws Exception {
 
         queryAccountID.setInt(1, accountNumber);
@@ -252,7 +263,6 @@ public class Datasource {
         return accountID;
 
     }
-
     public int queryBranchID(String branchName) throws Exception {
 
         queryBranchID.setString(1, branchName);
@@ -262,7 +272,6 @@ public class Datasource {
         return branchID;
 
     }
-
     public int queryEmployeeID(String lastName) throws Exception {
 
         queryEmployeeID.setString(1, lastName);
@@ -326,7 +335,6 @@ public class Datasource {
             return -1;
         }
     }
-
     public void insertNewTransaction(int accountNumber, String transactionType, String transDate, String transTime, String employeeLastName, double amount) {
         try {
             int accountId = queryAccountID(accountNumber);
@@ -368,7 +376,7 @@ public class Datasource {
             }
         }
     }
-
+    // Methods for manager mode
     public List<String> queryAllCustomerAccountNumberAndName(){
         try{
             ResultSet resultSet = queryCustomerAccountNumberAndName.executeQuery();
@@ -377,6 +385,21 @@ public class Datasource {
                 accountList.add("Name: "+resultSet.getString(1)+" "+resultSet.getString(2)+"\nAccount Number: "+resultSet.getInt(3)+"\n");
             }
             return accountList;
+        }catch (SQLException e){
+            System.out.println("Query failed: " + e.getMessage());
+            return null;
+        }
+    }
+    public List<String> queryAllEmployees(){
+        try{
+            ResultSet resultSet = queryAllEmployee.executeQuery();
+            List<String> employeeList = new ArrayList<>();
+            while(resultSet.next()){
+                employeeList.add("Name: "+resultSet.getString(2)+", "+resultSet.getString(1)+
+                        "\nTitle: "+resultSet.getString(3)+
+                        "\tBranch: "+resultSet.getString(4)+"\n");
+            }
+            return employeeList;
         }catch (SQLException e){
             System.out.println("Query failed: " + e.getMessage());
             return null;
